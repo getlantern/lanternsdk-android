@@ -69,6 +69,11 @@ public class Lantern {
         proxyAddr.set(lanternAddr);
     }
 
+    /**
+     * Stops circumventing with Lantern. Lantern will actually continue running in the background
+     * in order to keep its configuration up-to-date. Subsequent calls to start() will reuse the
+     * running Lantern and complete quickly.
+     */
     synchronized public static void stop() {
         proxyAddr.set(null);
     }
