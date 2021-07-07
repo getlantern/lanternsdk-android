@@ -51,10 +51,11 @@ public class Lantern {
      *
      * @param context            context used for creating Lantern configuration directory
      * @param appName            unique identifier for the current application (used for assigning proxies and tracking usage)
+     * @param proxyAll           if true, traffic to all domains will be proxied. If false, only domains on Lantern's whitelist, or domains detected as blocked, will be proxied.
      * @param startTimeoutMillis how long to wait for Lantern to start before throwing an exception
      * @throws Exception if Lantern was unable to start within startTimeoutMillis
      */
-    synchronized public static void start(Context context, String appName, long startTimeoutMillis) throws Exception {
+    synchronized public static void start(Context context, String appName, boolean proxyAll, long startTimeoutMillis) throws Exception {
         if (lanternAddr == null) {
             // need to start Lantern
             String configDir = new File(
@@ -63,7 +64,7 @@ public class Lantern {
             ).getAbsolutePath();
             String deviceId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
             StartResult startResult =
-                    Lanternsdk.start(appName, configDir, deviceId, startTimeoutMillis);
+                    Lanternsdk.start(appName, configDir, deviceId, proxyAll, startTimeoutMillis);
             lanternAddr = addrFromString(startResult.getHTTPAddr());
         }
         proxyAddr.set(lanternAddr);

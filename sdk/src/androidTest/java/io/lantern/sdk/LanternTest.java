@@ -22,11 +22,11 @@ public class LanternTest {
     public void testStartStop() throws Exception {
         Context context = InstrumentationRegistry.getInstrumentation().getContext();
         String ipWithoutLantern = fetchIP();
-        Lantern.start(context, "lantern", 60000);
+        Lantern.start(context, "lantern", true, 60000);
         String ipWithLanternStarted = fetchIP();
         Lantern.stop();
         String ipWithLanternStopped = fetchIP();
-        Lantern.start(context, "lantern", 30000);
+        Lantern.start(context, "lantern", true, 30000);
         String ipWithLanternRestarted = fetchIP();
 
         assertNotEquals(ipWithoutLantern, ipWithLanternStarted);
