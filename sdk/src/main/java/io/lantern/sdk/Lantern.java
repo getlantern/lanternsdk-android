@@ -22,7 +22,7 @@ import lanternsdk.StartResult;
  * with standard methods like HttpURLConnection will be proxied by Lantern.
  */
 public class Lantern {
-    static SocketAddress lanternAddr = null;
+    static InetSocketAddress lanternAddr = null;
     static AtomicReference<SocketAddress> proxyAddr = new AtomicReference<SocketAddress>();
 
     static {
@@ -53,9 +53,10 @@ public class Lantern {
      * @param appName            unique identifier for the current application (used for assigning proxies and tracking usage)
      * @param proxyAll           if true, traffic to all domains will be proxied. If false, only domains on Lantern's whitelist, or domains detected as blocked, will be proxied.
      * @param startTimeoutMillis how long to wait for Lantern to start before throwing an exception
+     * @return the InetSocketAddress at which the Lantern HTTP proxy is listening for connections
      * @throws Exception if Lantern was unable to start within startTimeoutMillis
      */
-    synchronized public static void start(Context context, String appName, boolean proxyAll, long startTimeoutMillis) throws Exception {
+    synchronized public static InetSocketAddress start(Context context, String appName, boolean proxyAll, long startTimeoutMillis) throws Exception {
         if (lanternAddr == null) {
             // need to start Lantern
             String configDir = new File(
@@ -68,6 +69,7 @@ public class Lantern {
             lanternAddr = addrFromString(startResult.getHTTPAddr());
         }
         proxyAddr.set(lanternAddr);
+        return lanternAddr;
     }
 
     /**
