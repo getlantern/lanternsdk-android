@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import lanternsdk.Lanternsdk;
-import lanternsdk.StartResult;
+import lanternsdk.ProxyAddr;
 
 /**
  * Provides an API to use an embedded Lantern. After starting Lantern, all URL connections opened
@@ -64,9 +64,9 @@ public class Lantern {
                     ".lantern"
             ).getAbsolutePath();
             String deviceId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-            StartResult startResult =
-                    Lanternsdk.start(appName, configDir, deviceId, proxyAll, startTimeoutMillis);
-            lanternAddr = addrFromString(startResult.getHTTPAddr());
+            Lanternsdk.start(appName, configDir, deviceId, proxyAll);
+            ProxyAddr proxyAddr = Lanternsdk.getProxyAddr(startTimeoutMillis);
+            lanternAddr = addrFromString(proxyAddr.getHTTPAddr());
         }
         proxyAddr.set(lanternAddr);
         return lanternAddr;
