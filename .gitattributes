@@ -1,0 +1,2 @@
+messaging/src/androidTest/assets/image.jpg filter=lfs diff=lfs merge=lfs -text
+sdk/libs/lanternsdk-android.aar filter=lfs diff=lfs merge=lfs -text
