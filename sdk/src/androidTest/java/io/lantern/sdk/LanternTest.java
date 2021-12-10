@@ -8,6 +8,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.File;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
@@ -25,12 +26,23 @@ public class LanternTest {
     @Test
     public void testStartStop() throws Exception {
         Context context = InstrumentationRegistry.getInstrumentation().getContext();
+        File configDir = new File(
+                context.getFilesDir(),
+                ".lantern"
+        );
+        // delete left-over config files from previous run
+        for (File file : configDir.listFiles()) {
+            if (!file.isDirectory()) {
+                file.delete();
+            }
+        }
+        
         String ipWithoutLantern = fetchIP();
-        InetSocketAddress firstAddress = Lantern.start(context, "lantern", true, 60000);
+        InetSocketAddress firstAddress = Lantern.start(context, "pangea", true, 60000);
         String ipWithLanternStarted = fetchIP();
         Lantern.stop();
         String ipWithLanternStopped = fetchIP();
-        InetSocketAddress secondAddress = Lantern.start(context, "lantern", true, 30000);
+        InetSocketAddress secondAddress = Lantern.start(context, "pangea", true, 30000);
         String ipWithLanternRestarted = fetchIP();
 
         assertNotEquals(ipWithoutLantern, ipWithLanternStarted);

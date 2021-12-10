@@ -64,8 +64,7 @@ public class Lantern {
                     ".lantern"
             ).getAbsolutePath();
             String deviceId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-            Lanternsdk.start(appName, configDir, deviceId, proxyAll);
-            ProxyAddr proxyAddr = Lanternsdk.getProxyAddr(startTimeoutMillis);
+            ProxyAddr proxyAddr = Lanternsdk.start(appName, configDir, deviceId, proxyAll, startTimeoutMillis);
             lanternAddr = addrFromString(proxyAddr.getHTTPAddr());
         }
         proxyAddr.set(lanternAddr);
