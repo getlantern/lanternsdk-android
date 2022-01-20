@@ -1,6 +1,7 @@
 package io.lantern.sdk;
 
 import android.content.Context;
+import android.os.Build;
 import android.provider.Settings;
 
 import java.io.File;
@@ -56,20 +57,51 @@ public class Lantern {
      * @return the InetSocketAddress at which the Lantern HTTP proxy is listening for connections
      * @throws Exception if Lantern was unable to start within startTimeoutMillis
      */
-    synchronized public static InetSocketAddress start(Context context, String appName, boolean proxyAll, long startTimeoutMillis) throws Exception {
+    synchronized public static InetSocketAddress start(
+            Context context,
+            String appName,
+            boolean proxyAll,
+            long startTimeoutMillis) throws Exception {
         if (lanternAddr == null) {
             // need to start Lantern
-            String configDir = new File(
-                    context.getFilesDir(),
-                    ".lantern"
-            ).getAbsolutePath();
-            String deviceId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-            Lanternsdk.start(appName, configDir, deviceId, proxyAll);
-            ProxyAddr proxyAddr = Lanternsdk.getProxyAddr(startTimeoutMillis);
+            ProxyAddr proxyAddr = Lanternsdk.start(
+                    appName,
+                    configDir(context),
+                    deviceId(context),
+                    proxyAll,
+                    startTimeoutMillis);
             lanternAddr = addrFromString(proxyAddr.getHTTPAddr());
         }
         proxyAddr.set(lanternAddr);
         return lanternAddr;
+    }
+
+    /**
+     * Reports an issue to the Lantern support team.
+     *
+     * @param context
+     * @param appName     unique identifier for the current application (used for assigning proxies and tracking usage)
+     * @param userEmail   the user's email address (okay to leave this blank)
+     * @param description a text description of the issue
+     * @param maxLogMB    the maximum size of logs to attach to the issue report in MB (10 is a reasonable value)
+     */
+    public static void reportIssue(
+            Context context,
+            String appName,
+            String userEmail,
+            String description,
+            int maxLogMB) throws Exception {
+        Lanternsdk.reportIssueAndroid(
+                appName,
+                configDir(context),
+                deviceId(context),
+                Build.DEVICE,
+                Build.MODEL,
+                "" + Build.VERSION.SDK_INT + " (" + Build.VERSION.RELEASE + ")",
+                userEmail,
+                description,
+                maxLogMB
+        );
     }
 
     /**
@@ -91,5 +123,16 @@ public class Lantern {
     private static InetSocketAddress addrFromString(String addr) throws Exception {
         URI uri = new URI("my://" + addr);
         return new InetSocketAddress(uri.getHost(), uri.getPort());
+    }
+
+    private static String deviceId(Context context) {
+        return Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
+
+    private static String configDir(Context context) {
+        return new File(
+                context.getFilesDir(),
+                ".lantern"
+        ).getAbsolutePath();
     }
 }
