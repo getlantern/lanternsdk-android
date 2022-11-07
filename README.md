@@ -21,7 +21,8 @@ import io.lantern.sdk.Lantern;
 Context context = ...;
 String appName = "your app name assigned by Lantern";
 long startTimeoutMillis = 60000; // 60 seconds
-Lantern.start(context, appName, startTimeoutMillis);
+bool proxyAllTraffic = true;        
+Lantern.start(context, appName, proxyAllTraffic, startTimeoutMillis);
 ```
 
 ### Stopping Lantern
