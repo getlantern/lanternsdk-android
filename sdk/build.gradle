@@ -1,10 +1,12 @@
 plugins {
     id 'com.android.library'
-    id 'com.kezong.fat-aar'
+    //id 'com.kezong.fat-aar'
 }
 
+apply plugin: 'com.kezong.fat-aar'
+
 android {
-    namespace 'org.getlantern.lantern.sdk'
+    namespace 'io.lantern.sdk'
     compileSdkVersion 34
     buildToolsVersion "34.0.0"
 
@@ -26,8 +28,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     packagingOptions {
@@ -55,4 +57,8 @@ dependencies {
     androidTestImplementation 'androidx.test:rules:1.6.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'com.squareup.okhttp3:okhttp:4.9.2'
+}
+
+fataar {
+    transitive = false
 }
