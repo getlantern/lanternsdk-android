@@ -19,7 +19,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.android.tools.build:gradle:8.6.0"
+        classpath "com.android.tools.build:gradle:8.7.0"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath("org.jlleitschuh.gradle:ktlint-gradle:11.3.1")
         classpath 'com.github.aasitnikov:fat-aar-android:1.4.1'
@@ -38,8 +38,12 @@ allprojects {
             dirs 'libs'
         }
     }
-
     apply plugin: "org.jlleitschuh.gradle.ktlint"
+}
+
+rootProject.buildDir = 'build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
 
 task clean(type: Delete) {

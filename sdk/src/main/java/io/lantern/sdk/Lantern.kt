@@ -7,6 +7,7 @@ import java.io.File
 import java.io.IOException
 import java.net.*
 import java.util.concurrent.atomic.AtomicReference
+import internalsdk.Internalsdk
 
 /**
  * Provides an API to use an embedded Lantern. After starting Lantern, all URL connections opened
@@ -56,47 +57,16 @@ object Lantern {
     ): InetSocketAddress {
         if (LanternAddr == null) {
             // Need to start Lantern
-            val proxyAddr = Lanternsdk.start(
-                appName,
+            val proxyAddr = Internalsdk.start(
                 configDir(context),
                 deviceId(context),
-                proxyAll,
-                startTimeoutMillis
+                null,
+                null
             )
             LanternAddr = addrFromString(proxyAddr.httpAddr)
         }
         proxyAddr.set(LanternAddr)
         return LanternAddr!!
-    }
-
-    /**
-     * Reports an issue to the Lantern support team.
-     *
-     * @param context
-     * @param appName     unique identifier for the current application (used for assigning proxies and tracking usage)
-     * @param userEmail   the user's email address (okay to leave this blank)
-     * @param description a text description of the issue
-     * @param maxLogMB    the maximum size of logs to attach to the issue report in MB (10 is a reasonable value)
-     */
-    @Throws(Exception::class)
-    fun reportIssue(
-        context: Context,
-        appName: String,
-        userEmail: String,
-        description: String,
-        maxLogMB: Int
-    ) {
-        Lanternsdk.reportIssueAndroid(
-            appName,
-            configDir(context),
-            deviceId(context),
-            Build.DEVICE,
-            Build.MODEL,
-            "${Build.VERSION.SDK_INT} (${Build.VERSION.RELEASE})",
-            userEmail,
-            description,
-            maxLogMB
-        )
     }
 
     /**

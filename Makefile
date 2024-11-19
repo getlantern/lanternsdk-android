@@ -6,6 +6,9 @@ LIBS_DIR := $(SDK_DIR)/libs
 BUILD_DIR := build
 PROD_FLAG := -ldflags "-s -w"
 GRADLEW := ./gradlew
+EXAMPLE_PROJECT := :example
+
+.PHONY: build release clean publish example-debug
 
 update-lantern-lib:
 	git submodule update --init --recursive --remote
@@ -23,8 +26,12 @@ release:
 	@echo "Building production SDK.."
 	$(GRADLEW) clean assembleRelease
 
+sdk-debug:
+	$(GRADLEW) clean :$(SDK_DIR):assembleDebug
+
+example-debug:
+	$(GRADLEW) clean $(EXAMPLE_PROJECT):assembleDebug
+
 clean:
 	rm -rf $(LIBS_DIR)/$(AAR_OUTPUT)
 	rm -rf $(BUILD_DIR)
-
-.PHONY: build release clean publish
