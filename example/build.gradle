@@ -23,6 +23,7 @@ android {
         }
     }
     
+    useLibrary 'org.apache.http.legacy'
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
