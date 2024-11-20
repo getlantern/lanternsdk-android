@@ -7,17 +7,20 @@ import java.io.File
 import java.io.IOException
 import java.net.*
 import java.util.concurrent.atomic.AtomicReference
-import internalsdk.Internalsdk
+import sdk.Sdk
 
 /**
  * Provides an API to use an embedded Lantern. After starting Lantern, all URL connections opened
  * with standard methods like HttpURLConnection will be proxied by Lantern.
  */
 object Lantern {
-    private var LanternAddr: InetSocketAddress? = null
+    private var lanternAddr: InetSocketAddress? = null
     private val proxyAddr = AtomicReference<SocketAddress?>()
 
-    fun init() {
+    fun setup(
+        context: Context,
+    ) {
+        Sdk.setup("", configDir(context), "")
         ProxySelector.setDefault(object : ProxySelector() {
             override fun select(uri: URI?): List<Proxy> {
                 val result = mutableListOf<Proxy>()
@@ -49,24 +52,14 @@ object Lantern {
      */
     @Synchronized
     @Throws(Exception::class)
-    fun start(
+    fun startHTTPProxy(
         context: Context,
-        appName: String,
-        proxyAll: Boolean,
-        startTimeoutMillis: Long
+        addr: String,
     ): InetSocketAddress {
-        if (LanternAddr == null) {
-            // Need to start Lantern
-            val proxyAddr = Internalsdk.start(
-                configDir(context),
-                deviceId(context),
-                null,
-                null
-            )
-            LanternAddr = addrFromString(proxyAddr.httpAddr)
-        }
-        proxyAddr.set(LanternAddr)
-        return LanternAddr!!
+        val result = Sdk.startHTTPProxy(addr)
+        lanternAddr = addrFromString(result.addr)
+        proxyAddr.set(lanternAddr)
+        return lanternAddr!!
     }
 
     /**
@@ -76,7 +69,13 @@ object Lantern {
      */
     @Synchronized
     fun stop() {
+        Sdk.stopHTTPProxy()
         proxyAddr.set(null)
+    }
+
+    fun getProxyPort(): Int {
+        val result = Sdk.httpProxyPort()
+        return result.toInt()
     }
 
     /**

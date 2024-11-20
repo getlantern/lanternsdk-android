@@ -13,13 +13,13 @@ EXAMPLE_PROJECT := :example
 update-lantern-lib:
 	git submodule update --init --recursive --remote
 
-build: update-lantern-lib
+build:
 	@echo "Building Lantern library..."
 	cd $(GO_LIB_PATH) && \
-	make android && \
+	make android-sdk && \
 	echo "Copying AAR to $(LIBS_DIR)..."
 	mkdir -p $(LIBS_DIR)
-	cp $(GO_LIB_PATH)/android/app/libs/$(SDK_NAME)-all.aar $(LIBS_DIR)/$(AAR_OUTPUT)
+	cp $(GO_LIB_PATH)/$(SDK_NAME)-all.aar $(LIBS_DIR)/$(AAR_OUTPUT)
 
 # Build SDK release
 release:
