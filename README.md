@@ -9,6 +9,14 @@ else.
 
 ## Usage
 
+### Build Lantern library
+
+To build and import the compiled Go code for the Lantern library, run the following command:
+
+```bash
+make build
+```
+
 ### Setting up Lantern
 
 To setup your app to integrate Lantern, you should first specify some initial configuration for the
