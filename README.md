@@ -9,6 +9,17 @@ else.
 
 ## Usage
 
+### Setting up Lantern
+To setup your app to integrate Lantern, you should first specify some initial configuration for the
+SDK to use, including the app name and configuration directory.
+
+```kotlin
+import android.content.Context
+import io.lantern.sdk.Lantern
+
+Lantern.setup("HelloVPN", "HelloVPN/config")
+```
+
 ### Starting Lantern
 After starting Lantern, all HTTP traffic will be proxied.
 
@@ -29,6 +40,7 @@ Lantern.start(context, appName, proxyAddr, proxyAllTraffic, startTimeoutMillis)
 After stopping Lantern, Lantern will continue to run in the background to keep fetching updated
 configuration maintain its state, but no traffic will be proxied.
 
+```kotlin
 ...
 Lantern.stop()
 ```
@@ -37,6 +49,6 @@ Lantern.stop()
 Lantern can be restarted again after stopping it. This will be a fast start since Lantern is already
 running
 
-```
+```kotlin
 Lantern.restart(context, startTimeoutMillis)
 ```
