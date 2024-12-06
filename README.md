@@ -10,6 +10,7 @@ else.
 ## Usage
 
 ### Setting up Lantern
+
 To setup your app to integrate Lantern, you should first specify some initial configuration for the
 SDK to use, including the app name and configuration directory.
 
@@ -21,10 +22,6 @@ Lantern.setup("HelloVPN", "HelloVPN/config")
 ```
 
 ### Starting Lantern
-
-After starting Lantern, it will be set as the system. It blocks up til the given timeout and returns the address the proxy is listening. If the proxy doesn't start within the given timeout, this method returns an error.
-
-After starting Lantern, all HTTP traffic will be proxied.
 
 ```kotlin
 import android.content.Context
@@ -39,16 +36,20 @@ val proxyAllTraffic = true
 Lantern.start(context, appName, proxyAddr, proxyAllTraffic, startTimeoutMillis)
 ```
 
+After starting Lantern, it will be set as the system proxy and all HTTP traffic will be proxied.
+This method blocks up til the given timeout and returns the address the proxy is listening. If the proxy doesn't start within the given timeout, it returns an error.
+
 ### Stopping Lantern
-After stopping Lantern, Lantern will continue to run in the background to keep fetching updated
-configuration maintain its state, but no traffic will be proxied.
 
 ```kotlin
 Lantern.stop()
 ```
 
-### Restarting Lantern Again
-Lantern can be restarted again after stopping it. This will be a fast start since Lantern is already
+After stopping Lantern, Lantern will continue to run in the background to keep fetching updated
+configuration maintain its state, but no traffic will be proxied.
+
+### Restart Lantern
+Lantern can be restarted after stopping it. This will be a fast start since Lantern is already
 running
 
 ```kotlin
