@@ -84,6 +84,9 @@ class MainActivity : AppCompatActivity() {
         startProxyButton.visibility = View.VISIBLE
         stopProxyButton.visibility = View.GONE
         testRequestButton.visibility = View.GONE
+        launchWebViewButton.visibility = View.GONE
+        webView.visibility = View.GONE
+        logsView.text = ""
     }
 
     private fun openWebView() {
@@ -101,6 +104,9 @@ class MainActivity : AppCompatActivity() {
             settings.pluginState = PluginState.ON
             visibility = View.VISIBLE
             webViewClient = object : WebViewClient() {
+                override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+                    return false
+                }
                 override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest): WebResourceResponse? {
                     val url = request.url.toString()
                     val proxyResponse = ProxyHelper.proxyRequest(url) ?: return null

@@ -15,16 +15,24 @@ import sdk.Sdk
  */
 object Lantern {
     private var lanternAddr: InetSocketAddress? = null
-    private val proxyAddr = AtomicReference<SocketAddress?>()
 
+    // setup is used to initially configure the Lantern SDK and specifies the config directory
+    // and app name to use
     fun setup(
         context: Context,
+        appName: String,
+        configDir: String,
     ) {
-        Sdk.setup("", configDir(context), "")
+        Sdk.setup(appName, configDir)
+    }
+
+    fun _setProxy(
+        proxyAddr: String,
+    ) {
         ProxySelector.setDefault(object : ProxySelector() {
             override fun select(uri: URI?): List<Proxy> {
                 val result = mutableListOf<Proxy>()
-                val addr = proxyAddr.get()
+                val addr = addrFromString(proxyAddr)
                 if (addr == null) {
                     result.add(Proxy.NO_PROXY)
                 } else {
@@ -52,13 +60,16 @@ object Lantern {
      */
     @Synchronized
     @Throws(Exception::class)
-    fun startHTTPProxy(
+    fun start(
         context: Context,
+        appName: String,
         addr: String,
+        proxyAll: Boolean,
+        startTimeoutMillis: Long,
     ): InetSocketAddress {
-        val result = Sdk.startHTTPProxy(addr)
+        val result = Sdk.start(appName, addr, proxyAll, startTimeoutMillis)
         lanternAddr = addrFromString(result.addr)
-        proxyAddr.set(lanternAddr)
+        _setProxy(lanternAddr)
         return lanternAddr!!
     }
 
@@ -69,8 +80,8 @@ object Lantern {
      */
     @Synchronized
     fun stop() {
-        Sdk.stopHTTPProxy()
-        proxyAddr.set(null)
+        Sdk.stop()
+        _setProxy("")
     }
 
     fun getProxyPort(): Int {

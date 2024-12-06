@@ -10,13 +10,13 @@
         android:id="@+id/startProxyButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Start Proxy" />
+        android:text="Start Lantern" />
 
     <Button
         android:id="@+id/stopProxyButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Stop Proxy"
+        android:text="Stop Lantern"
         android:visibility="gone" />
 
     <Button
@@ -41,12 +41,11 @@
         android:layout_weight="1"
         android:visibility="gone" />
 
-    <!-- Log Title -->
     <TextView
         android:id="@+id/logTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Proxy Logs"
+        android:text="Lantern Logs"
         android:textStyle="bold"
         android:paddingTop="16dp" />
 
