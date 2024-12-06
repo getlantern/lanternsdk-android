@@ -21,6 +21,9 @@ Lantern.setup("HelloVPN", "HelloVPN/config")
 ```
 
 ### Starting Lantern
+
+After starting Lantern, it will be set as the system. It blocks up til the given timeout and returns the address the proxy is listening. If the proxy doesn't start within the given timeout, this method returns an error.
+
 After starting Lantern, all HTTP traffic will be proxied.
 
 ```kotlin
@@ -41,7 +44,6 @@ After stopping Lantern, Lantern will continue to run in the background to keep f
 configuration maintain its state, but no traffic will be proxied.
 
 ```kotlin
-...
 Lantern.stop()
 ```
 
