@@ -9,34 +9,56 @@ else.
 
 ## Usage
 
-### Starting Lantern
-After starting Lantern, all HTTP traffic will be proxied.
+### Build Lantern library
 
-```java
-import android.content.Context;
-import io.lantern.sdk.Lantern;
+To build and import the compiled Go code for the Lantern library, run the following command:
 
-...
-
-Context context = ...;
-String appName = "your app name assigned by Lantern";
-long startTimeoutMillis = 60000; // 60 seconds
-bool proxyAllTraffic = true;        
-Lantern.start(context, appName, proxyAllTraffic, startTimeoutMillis);
+```bash
+make build
 ```
 
+### Setting up Lantern
+
+To setup your app to integrate Lantern, you should first specify some initial configuration for the
+SDK to use, including the app name and configuration directory.
+
+```kotlin
+import android.content.Context
+import io.lantern.sdk.Lantern
+
+Lantern.setup("HelloVPN", "HelloVPN/config")
+```
+
+### Starting Lantern
+
+```kotlin
+import android.content.Context
+import io.lantern.sdk.Lantern
+
+...
+val context: Context = ...
+val appName = "your app name assigned by Lantern"
+val proxyAddr = ":8080"
+val proxyAllTraffic = true
+Lantern.start(context, appName, proxyAddr, proxyAllTraffic, startTimeoutMillis)
+```
+
+After starting Lantern, it will be set as the system proxy and all HTTP traffic will be proxied.
+This method blocks up til the given timeout and returns the address the proxy is listening. If the proxy doesn't start within the given timeout, it returns an error.
+
 ### Stopping Lantern
+
+```kotlin
+Lantern.stop()
+```
+
 After stopping Lantern, Lantern will continue to run in the background to keep fetching updated
 configuration maintain its state, but no traffic will be proxied.
 
-...
-Lantern.stop();
-```
+### Restart Lantern
+Lantern can be restarted after stopping it. This will be a fast start since Lantern is already
+running
 
-### Starting Lantern Again
-Lantern can be started again after stopping it. This will be a fast start since Lantern is already
-running.
-
-```
-Lantern.start(context, appName, startTimeoutMillis);
+```kotlin
+Lantern.restart(context, startTimeoutMillis)
 ```

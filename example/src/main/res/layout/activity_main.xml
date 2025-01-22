@@ -1,0 +1,70 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Buttons -->
+    <Button
+        android:id="@+id/startProxyButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Start Lantern" />
+
+    <Button
+        android:id="@+id/stopProxyButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Stop Lantern"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/testRequestButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send Test Request"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/launchWebViewButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Open WebView (Proxy)"
+        android:visibility="gone" />
+
+    <!-- WebView -->
+    <WebView
+        android:id="@+id/webView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/logTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Lantern Logs"
+        android:textStyle="bold"
+        android:paddingTop="16dp" />
+
+    <!-- ScrollView -->
+    <ScrollView
+        android:id="@+id/logsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#000000"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/logs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="#00FF00"
+            android:typeface="monospace"
+            android:scrollbars="vertical" />
+    </ScrollView>
+</LinearLayout>
