@@ -14,6 +14,7 @@ build-aar:
 	@echo "Building Lantern library..."
 	go env -w 'GOPRIVATE=github.com/getlantern/*' && \
 	go install golang.org/x/mobile/cmd/gomobile@latest && \
+	go get golang.org/x/mobile/bind && \
 	gomobile init && \
 	gomobile bind -target=android -tags='headless lantern' -o=$(BUILD_DIR)/$(AAR_OUTPUT) \
 		-androidapi=23 \
