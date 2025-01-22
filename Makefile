@@ -8,7 +8,7 @@ PROD_FLAG := -ldflags "-s -w"
 GRADLEW := ./gradlew
 EXAMPLE_PROJECT := :example
 
-.PHONY: build release clean publish example-debug clone-go-client build build-aar copy-aar
+.PHONY: build release clean publish example-debug clone-go-client build-sdk build-aar copy-aar
 
 build-aar: export EXTRA_LDFLAGS += -checklinkname=0
 build-aar:
@@ -43,8 +43,7 @@ sdk-debug:
 
 sdk-release:
 	$(GRADLEW) clean :$(SDK_DIR):assembleRelease
-	cp build/sdk/outputs/aar/sdk-release.aar build/$(SDK_OUTPUT)
-	echo "Lantern SDK: build/$(SDK_OUTPUT)"
+	cp build/sdk/outputs/aar/sdk-release.aar ./build/$(SDK_OUTPUT)
 
 example-debug:
 	$(GRADLEW) $(EXAMPLE_PROJECT):assembleDebug
