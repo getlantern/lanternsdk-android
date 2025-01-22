@@ -27,7 +27,7 @@ The .aar file contains the compiled Go library and Kotlin bindings, ready for in
 
 Copy the lanternsdk-android.aar file to your app’s libs/ directory and update your app’s build.gradle:
 
-```
+```groovy
 repositories {
     flatDir {
         dirs 'libs'
