@@ -29,14 +29,14 @@ copy-aar:
 build: build-aar copy-aar
 
 # Build SDK release
-release: build sdk-debug
+release: build
 	@echo "Building production SDK.."
 	$(GRADLEW) assembleRelease
 
-sdk-debug:
+sdk-debug: build
 	$(GRADLEW) clean :$(SDK_DIR):assembleDebug
 
-example-debug:
+example-debug: sdk-debug
 	$(GRADLEW) $(EXAMPLE_PROJECT):assembleDebug
 
 clean:
