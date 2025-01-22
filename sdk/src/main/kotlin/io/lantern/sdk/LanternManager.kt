@@ -10,16 +10,21 @@ import java.util.concurrent.atomic.AtomicReference
 import lantern.LanternClient
 
 /**
- * Provides an API to use an embedded Lantern. After starting Lantern, all URL connections opened
- * with standard methods like HttpURLConnection will be proxied by Lantern.
+ * LanternManager provides an API to use an embedded Lantern. It wraps the LanternClient and
+ * configures Lantern as a system proxy for HTTP traffic.
  */
 object LanternManager {
     private val lanternClient = LanternClient()
     private var lanternAddr: InetSocketAddress? = null
 
-    // setup is used to initially configure the Lantern SDK and specifies the config directory
-    // * @param appName - unique identifier for the current application (used for assigning proxies and tracking usage)
-    // and app name to use
+    /**
+     * Configures Lantern with the specified application name and configuration directory.
+     * This must be called before starting Lantern.
+     *
+     * @param context The application context (used to resolve file paths if necessary).
+     * @param appName A unique identifier for the application (used for assigning proxies and tracking usage).
+     * @param configDir The directory where Lantern configuration files will be stored.
+     */
     fun setup(
         context: Context,
         appName: String,
@@ -53,7 +58,6 @@ object LanternManager {
      * @param addr               the HTTP proxy address Lantern should be started at
      * @param proxyAll           if true, traffic to all domains will be proxied. If false, only domains on Lantern's whitelist, or domains detected as blocked, will be proxied.
      * @return the InetSocketAddress at which the Lantern HTTP proxy is listening for connections
-     * @throws Exception if Lantern was unable to start within startTimeoutMillis
      */
     @Synchronized
     @Throws(Exception::class)
@@ -69,9 +73,8 @@ object LanternManager {
     }
 
     /**
-     * Stops circumventing with Lantern. Lantern will actually continue running in the background
-     * in order to keep its configuration up-to-date. Subsequent calls to start() will reuse the
-     * running Lantern and complete quickly.
+     * Stops Lantern's active proxying but keeps it running in the background for configuration updates.
+     * Future calls to startLantern() will reuse the running instance.
      */
     @Synchronized
     fun stopLantern() {
@@ -84,6 +87,12 @@ object LanternManager {
         }
     }
 
+
+    /**
+     * Returns the port where Lantern's HTTP proxy is listening.
+     *
+     * @return The proxy port number.
+     */
     fun getProxyPort(): Int {
         val result = lanternClient.httpProxyPort()
         return result.toInt()

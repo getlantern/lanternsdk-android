@@ -1,11 +1,11 @@
 # Lantern SDK for Android
-The Lantern SDK enables developers to embed Lantern into Android applications, offering censorship circumvention capabilities for any network APIs that respect the default ProxySelector. The SDK integrates with Lantern’s core proxying functionality while offering a Kotlin-friendly API for easy integration.
+The Lantern SDK provides a way for developers and third parties to integrate Lantern and access its infrastructure for censorship circumvention. The SDK is designed to work with network APIs that respect the default ProxySelector. It integrates with Lantern’s core proxying functionality and offers a Kotlin-friendly API for easy integration.
 
 ## Overview
 
 - [lantern](lantern): The core Go logic for configuring and launching Lantern (via Flashlight)
 - [sdk](sdk): The SDK module that wraps the Go functions in a Kotlin-friendly interface
-- [example](example): Demonstrates how to integrate the Lantern SDK in an actual Android application.
+- [example](example): Demonstrates how to integrate the Lantern SDK in an actual Android application
 
 ## Getting Started
 
@@ -17,9 +17,7 @@ The following command builds both the Lantern core library and the Android SDK:
 make build-sdk
 ```
 
-This will produce the SDK as an .aar file located at:
-
-./build/lanternsdk-android.aar
+This will produce the SDK as an .aar file located at `./build/lanternsdk-android.aar`.
 
 The .aar file contains the compiled Go library and Kotlin bindings, ready for integration into your Android app.
 
