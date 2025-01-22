@@ -17,7 +17,7 @@ build-aar:
 	go install golang.org/x/mobile/cmd/gomobile@latest && \
 	go get golang.org/x/mobile/bind && \
 	gomobile init && \
-	gomobile bind -target=android -tags='headless lantern' -o="$(BUILD_DIR)/$(LIBLANTERN)" \
+	gomobile bind -target=android -tags='headless lantern' -o=$(BUILD_DIR)/$(LIBLANTERN) \
 		-androidapi=23 \
 		-ldflags="-s -w $(EXTRA_LDFLAGS)" \
 		github.com/getlantern/lantern-client/sdk
