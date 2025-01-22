@@ -33,11 +33,7 @@ object Lantern {
             override fun select(uri: URI?): List<Proxy> {
                 val result = mutableListOf<Proxy>()
                 val addr = addrFromString(proxyAddr)
-                if (addr == null) {
-                    result.add(Proxy.NO_PROXY)
-                } else {
-                    result.add(Proxy(Proxy.Type.HTTP, addr))
-                }
+                result.add(Proxy(Proxy.Type.HTTP, addr))
                 return result
             }
 
@@ -67,9 +63,9 @@ object Lantern {
         proxyAll: Boolean,
         startTimeoutMillis: Long,
     ): InetSocketAddress {
-        val result = Sdk.start(appName, addr, proxyAll, startTimeoutMillis)
+        val result = Sdk.start(addr, proxyAll)
         lanternAddr = addrFromString(result.addr)
-        _setProxy(lanternAddr)
+        _setProxy(result.addr)
         return lanternAddr!!
     }
 

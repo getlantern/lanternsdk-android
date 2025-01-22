@@ -1,6 +1,5 @@
 SDK_NAME := liblantern
 SDK_DIR := sdk
-GO_LIB_PATH := lantern
 AAR_OUTPUT := lanternsdk-android.aar
 LIBS_DIR := $(SDK_DIR)/libs
 BUILD_DIR := build
@@ -8,29 +7,36 @@ PROD_FLAG := -ldflags "-s -w"
 GRADLEW := ./gradlew
 EXAMPLE_PROJECT := :example
 
-.PHONY: build release clean publish example-debug
+.PHONY: build release clean publish example-debug clone-go-client build build-aar copy-aar
 
-update-lantern-lib:
-	git submodule update --init --recursive --remote
-
-build:
+build-aar: export EXTRA_LDFLAGS += -checklinkname=0
+build-aar:
 	@echo "Building Lantern library..."
-	cd $(GO_LIB_PATH) && \
-	make android-sdk && \
+	go env -w 'GOPRIVATE=github.com/getlantern/*' && \
+	go install golang.org/x/mobile/cmd/gomobile@latest && \
+	gomobile init && \
+	gomobile bind -target=android -tags='headless lantern' -o=$(BUILD_DIR)/$(AAR_OUTPUT) \
+		-androidapi=23 \
+		-ldflags="-s -w $(EXTRA_LDFLAGS)" \
+		github.com/getlantern/lantern-client/sdk
+
+copy-aar:
 	echo "Copying AAR to $(LIBS_DIR)..."
 	mkdir -p $(LIBS_DIR)
-	cp $(GO_LIB_PATH)/$(SDK_NAME)-all.aar $(LIBS_DIR)/$(AAR_OUTPUT)
+	cp $(BUILD_DIR)/$(AAR_OUTPUT) $(LIBS_DIR)/$(AAR_OUTPUT)
+
+build: build-aar copy-aar
 
 # Build SDK release
 release:
 	@echo "Building production SDK.."
-	$(GRADLEW) clean assembleRelease
+	$(GRADLEW) assembleRelease
 
 sdk-debug:
 	$(GRADLEW) clean :$(SDK_DIR):assembleDebug
 
 example-debug:
-	$(GRADLEW) clean $(EXAMPLE_PROJECT):assembleDebug
+	$(GRADLEW) $(EXAMPLE_PROJECT):assembleDebug
 
 clean:
 	rm -rf $(LIBS_DIR)/$(AAR_OUTPUT)
