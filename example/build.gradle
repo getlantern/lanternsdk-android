@@ -55,8 +55,7 @@ repositories {
 
 dependencies {
 
-    //implementation project(':sdk')
-    implementation files('libs/lanternsdk-android.aar')
+    implementation(name: 'lanternsdk-android', ext: 'aar')
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
