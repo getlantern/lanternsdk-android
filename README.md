@@ -26,7 +26,7 @@ SDK to use, including the app name and configuration directory.
 import android.content.Context
 import io.lantern.sdk.Lantern
 
-val context: Context = ...
+val context: Context = // ...
 
 Lantern.setup(context, "HelloVPN", "HelloVPN/config")
 ```
@@ -37,10 +37,11 @@ Lantern.setup(context, "HelloVPN", "HelloVPN/config")
 import android.content.Context
 import io.lantern.sdk.Lantern
 
-...
-val context: Context = ...
+
+val context: Context = // ...
 val proxyAddr = ":8080"
 val proxyAllTraffic = true
+
 Lantern.start(context, proxyAddr, proxyAllTraffic)
 ```
 
