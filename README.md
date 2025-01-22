@@ -3,7 +3,7 @@ This SDK enables the user to embed Lantern in order to provide censorship circum
 network APIs that respect the [default ProxySelector](https://developer.android.com/reference/java/net/ProxySelector#getDefault()).
 
 ## Output
-After running the build, you can find the library at `./sdk/libs/lanternsdk-android.aar`. This
+After running the build, you can find the library at `./build/lanternsdk-android.aar`. This
 library embeds the Go library, so consumers of the SDK just need lanternsdk-android.aar and nothing
 else.
 

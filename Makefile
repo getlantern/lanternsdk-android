@@ -1,6 +1,6 @@
 SDK_NAME := liblantern
 SDK_DIR := sdk
-LIBLANTERN := lantern-android.aar
+LIBLANTERN := liblantern.aar
 SDK_OUTPUT := lanternsdk-android.aar
 LIBS_DIR := $(SDK_DIR)/libs
 BUILD_DIR := build
