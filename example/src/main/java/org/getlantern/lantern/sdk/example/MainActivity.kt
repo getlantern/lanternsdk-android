@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Lantern.setup(this)
+        Lantern.setup(this, "Example", "Example/Config")
 
         setContentView(R.layout.activity_main)
 
@@ -62,7 +62,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun startProxy() {
         // Start the HTTP proxy using the SDK
-        val result = Lantern.startHTTPProxy(this, "127.0.0.1:8484")
+        val proxyAddr = ":8080"
+        val proxyAllTraffic = true
+        val result = Lantern.start(this, proxyAddr, proxyAllTraffic)
         val proxyPort = result.port
         ProxyHelper.setProxy("127.0.0.1", proxyPort)
         appendLog("Proxy started on port $proxyPort\n")

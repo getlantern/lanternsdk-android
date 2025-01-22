@@ -17,6 +17,7 @@ object Lantern {
     private var lanternAddr: InetSocketAddress? = null
 
     // setup is used to initially configure the Lantern SDK and specifies the config directory
+    // * @param appName - unique identifier for the current application (used for assigning proxies and tracking usage)
     // and app name to use
     fun setup(
         context: Context,
@@ -48,9 +49,8 @@ object Lantern {
      * already running Lantern.
      *
      * @param context            context used for creating Lantern configuration directory
-     * @param appName            unique identifier for the current application (used for assigning proxies and tracking usage)
+     * @param addr               the HTTP proxy address Lantern should be started at
      * @param proxyAll           if true, traffic to all domains will be proxied. If false, only domains on Lantern's whitelist, or domains detected as blocked, will be proxied.
-     * @param startTimeoutMillis how long to wait for Lantern to start before throwing an exception
      * @return the InetSocketAddress at which the Lantern HTTP proxy is listening for connections
      * @throws Exception if Lantern was unable to start within startTimeoutMillis
      */
@@ -58,10 +58,8 @@ object Lantern {
     @Throws(Exception::class)
     fun start(
         context: Context,
-        appName: String,
         addr: String,
         proxyAll: Boolean,
-        startTimeoutMillis: Long,
     ): InetSocketAddress {
         val result = Sdk.start(addr, proxyAll)
         lanternAddr = addrFromString(result.addr)
