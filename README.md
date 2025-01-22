@@ -1,11 +1,5 @@
-# lanternsdk-android
-This SDK enables the user to embed Lantern in order to provide censorship circumvention to any
-network APIs that respect the [default ProxySelector](https://developer.android.com/reference/java/net/ProxySelector#getDefault()).
-
-## Output
-After running the build, you can find the library at `./build/lanternsdk-android.aar`. This
-library embeds the Go library, so consumers of the SDK just need lanternsdk-android.aar and nothing
-else.
+# Lantern SDK for Android
+The Lantern SDK enables developers to embed Lantern into Android applications, offering censorship circumvention capabilities for any network APIs that respect the default ProxySelector. The SDK integrates with Lantern’s core proxying functionality while offering a Kotlin-friendly API for easy integration.
 
 ## Overview
 
@@ -13,40 +7,61 @@ else.
 - [sdk](sdk): The SDK module that wraps the Go functions in a Kotlin-friendly interface
 - [example](example): Demonstrates how to integrate the Lantern SDK in an actual Android application.
 
-## Usage
+## Getting Started
 
-### Build Lantern library
+### Build the Lantern SDK
 
-To build the compiled Go code for the Lantern library and the SDK, run the following command:
+The following command builds both the Lantern core library and the Android SDK:
 
 ```bash
 make build-sdk
 ```
 
-### Setting up Lantern
+This will produce the SDK as an .aar file located at:
 
-To setup your app to integrate Lantern, you should first specify some initial configuration for the
-SDK to use, including the app name and configuration directory.
+./build/lanternsdk-android.aar
+
+The .aar file contains the compiled Go library and Kotlin bindings, ready for integration into your Android app.
+
+### Integrating the Lantern SDK
+
+1. Add the SDK to Your Project
+
+Copy the lanternsdk-android.aar file to your app’s libs/ directory and update your app’s build.gradle:
+
+```
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+dependencies {
+    implementation(name: 'lanternsdk-android', ext: 'aar')
+}
+```
+
+2. Initialize Lantern
+
+Before starting the Lantern proxy, initialize the SDK with your app name and configuration directory:
 
 ```kotlin
-import android.content.Context
 import io.lantern.sdk.LanternManager
-
-val context: Context = // ...
 
 LanternManager.setup(context, "HelloVPN", "HelloVPN/config")
 ```
 
-### Starting Lantern
+3. Start the Lantern Proxy
+
+Start Lantern with the desired proxy configuration:
 
 ```kotlin
-import android.content.Context
 import io.lantern.sdk.LanternManager
 
 
 val context: Context = // ...
-val proxyAddr = ":8080"
-val proxyAllTraffic = true
+val proxyAddr = ":8080"  // Proxy address (port 8080 in this example
+val proxyAllTraffic = true // Set to true to proxy all traffic
 
 LanternManager.startLantern(context, proxyAddr, proxyAllTraffic)
 ```
@@ -54,11 +69,12 @@ LanternManager.startLantern(context, proxyAddr, proxyAllTraffic)
 After starting Lantern, it will be set as the system proxy and all HTTP traffic will be proxied.
 This method blocks up til the given timeout and returns the address the proxy is listening. If the proxy doesn't start within the given timeout, it returns an error.
 
-### Stopping Lantern
+4. Stop the Lantern Proxy
+
+To stop actively proxying traffic:
 
 ```kotlin
 LanternManager.stopLantern()
 ```
 
-After stopping Lantern, Lantern will continue to run in the background to keep fetching updated
-configuration maintain its state, but no traffic will be proxied.
+Lantern will continue running in the background to update its configuration but will no longer proxy traffic.
