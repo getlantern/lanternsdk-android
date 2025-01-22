@@ -28,7 +28,9 @@ copy-aar:
 	cp $(BUILD_DIR)/$(LIBLANTERN) $(LIBS_DIR)/$(LIBLANTERN)
 
 build: build-aar copy-aar
-	echo "Lantern SDK: build/$(SDK_OUTPUT)"
+	echo "Lantern: build/$(LIBLANTERN)"
+
+build-sdk: build sdk-release
 
 # Build SDK
 release: build sdk-release copy-sdk example-release
@@ -42,6 +44,7 @@ sdk-debug:
 sdk-release:
 	$(GRADLEW) clean :$(SDK_DIR):assembleRelease
 	cp build/sdk/outputs/aar/sdk-release.aar build/$(SDK_OUTPUT)
+	echo "Lantern SDK: build/$(SDK_OUTPUT)"
 
 example-debug:
 	$(GRADLEW) $(EXAMPLE_PROJECT):assembleDebug

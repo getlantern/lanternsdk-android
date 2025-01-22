@@ -11,10 +11,10 @@ else.
 
 ### Build Lantern library
 
-To build and import the compiled Go code for the Lantern library, run the following command:
+To build the compiled Go code for the Lantern library and the SDK, run the following command:
 
 ```bash
-make build
+make build-sdk
 ```
 
 ### Setting up Lantern
