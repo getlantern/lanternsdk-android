@@ -17,7 +17,7 @@ The following command builds both the Lantern core library and the Android SDK:
 make build-sdk
 ```
 
-This will produce the SDK as an .aar file located at `./build/lanternsdk-android.aar`.
+This will produce the SDK as an .aar file located at [./build/lanternsdk-android.aar](build/lanternsdk-android.aar).
 
 The .aar file contains the compiled Go library and Kotlin bindings, ready for integration into your Android app.
 
