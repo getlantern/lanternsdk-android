@@ -3,7 +3,7 @@ name: Build and Publish SDK
 on:
   push:
     branches:
-      - atavism/update-sdk
+      - atavism/ci-updates
     tags:
       - 'v*'
 
