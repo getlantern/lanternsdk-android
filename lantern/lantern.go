@@ -3,6 +3,9 @@
 // and censorship circumvention capabilities.
 package lantern
 
+// #cgo LDFLAGS: -static-libstdc++
+import "C"
+
 import (
 	"errors"
 	"fmt"

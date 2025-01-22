@@ -10,8 +10,7 @@ add_library(
     src/main/cpp/native-lib.cpp
 )
 
-# Specify include directories
-include_directories(src/main/cpp/include)
+include(ndk-stl-config.cmake)
 
 # Link native libraries
 find_library(log-lib log)
