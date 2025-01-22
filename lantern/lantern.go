@@ -24,7 +24,8 @@ import (
 const defaultStartTimeout = 5 * time.Second
 
 var (
-	log = golog.LoggerFor("lantern")
+	log                  = golog.LoggerFor("lantern")
+	errLanternNotRunning = errors.New("Lantern is not running")
 )
 
 // LanternClient provides an interface for configuring and running Lantern's
@@ -33,7 +34,6 @@ type LanternClient struct {
 	client    *client.Client
 	configDir string
 	appName   string
-	once      sync.Once
 	mu        sync.Mutex
 
 	started bool
@@ -63,20 +63,25 @@ func (lc *LanternClient) Setup(appName, configDir string) {
 // Start initializes and starts the Lantern HTTP proxy. If Lantern is already running,
 // this method returns an error. It blocks until the proxy is ready
 func (lc *LanternClient) Start(httpProxyAddr string, proxyAll bool) (*StartResult, error) {
-	if lc.started {
+	lc.mu.Lock()
+	started := lc.started
+	lc.mu.Unlock()
+	if started {
 		return nil, errors.New("Lantern is already running")
 	}
+
+	go lc.runLantern(httpProxyAddr, proxyAll)
+
 	timeout := defaultStartTimeout
-
-	lc.once.Do(func() {
-		go lc.runLantern(httpProxyAddr, proxyAll)
-	})
-
 	addr, ok := client.Addr(timeout)
 	if !ok {
 		return nil, fmt.Errorf("HTTP Proxy didn't start within %v timeout", timeout)
 	}
+	// Mark Lantern as started
+	lc.mu.Lock()
 	lc.started = true
+	lc.mu.Unlock()
+
 	return &StartResult{addr.(string)}, nil
 }
 
@@ -84,12 +89,22 @@ func (lc *LanternClient) Start(httpProxyAddr string, proxyAll bool) (*StartResul
 // in the background for configuration updates. Subsequent calls to Start() will
 // reuse the existing Lantern instance.
 func (lc *LanternClient) Stop() error {
+	lc.mu.Lock()
+	defer lc.mu.Unlock()
+
 	if !lc.started {
-		return errors.New("Lantern is not running")
+		return errLanternNotRunning
 	}
+
+	if lc.client == nil {
+		// Lantern hasn't fully initialized the client yet
+		return errors.New("client is not fully initialized")
+	}
+
 	if err := lc.client.Stop(); err != nil {
 		return err
 	}
+
 	lc.started = false
 	return nil
 }
@@ -98,7 +113,7 @@ func (lc *LanternClient) Stop() error {
 func (lc *LanternClient) HTTPProxyPort() (int, error) {
 	result, isValid := client.Addr(5 * time.Second)
 	if !isValid {
-		return 0, errors.New("flashlight is not running")
+		return 0, errLanternNotRunning
 	}
 	_, portStr, _ := net.SplitHostPort(result.(string))
 	port, _ := strconv.Atoi(portStr)
@@ -107,8 +122,12 @@ func (lc *LanternClient) HTTPProxyPort() (int, error) {
 
 // runLantern launches the Lantern engine and sets up its HTTP proxy.
 func (lc *LanternClient) runLantern(httpProxyAddr string, proxyAll bool) *flashlight.Flashlight {
-	appName, configDir := lc.appName, lc.configDir
-	log.Debugf("Starting lantern: configDir %s", configDir)
+	lc.mu.Lock()
+	appName := lc.appName
+	configDir := lc.configDir
+	lc.mu.Unlock()
+
+	log.Debugf("Starting Lantern with configDir=%s, proxyAll=%v", configDir, proxyAll)
 
 	userConfig := common.NewUserConfig("", "a34113", 3456344, "tok123", map[string]string{}, "")
 
