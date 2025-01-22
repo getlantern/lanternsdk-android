@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
+    id 'maven-publish'
+    id 'signing'
 }
 
 apply plugin: 'com.kezong.fat-aar'
@@ -65,7 +67,28 @@ android {
     }
 }
 
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId = 'org.getlantern.lantern'
+            artifactId = 'sdk'
+            version = '1.0.0'
 
+        }
+    }
+
+    repositories {
+        maven {
+            name = "ossrh"
+            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+
+            credentials {
+                username = project.findProperty("mavenCentralUsername") ?: System.getenv("MAVEN_USERNAME")
+                password = project.findProperty("mavenCentralPassword") ?: System.getenv("MAVEN_PASSWORD")
+            }
+        }
+    }
+}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: '*.jar')

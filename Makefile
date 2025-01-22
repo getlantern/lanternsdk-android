@@ -1,7 +1,7 @@
 SDK_NAME := liblantern
 SDK_DIR := sdk
 AAR_OUTPUT := lanternsdk-android.aar
-SDK_OUTPUT := sdk-debug.aar
+SDK_OUTPUT := sdk-release.aar
 LIBS_DIR := $(SDK_DIR)/libs
 BUILD_DIR := build
 PROD_FLAG := -ldflags "-s -w"
@@ -30,13 +30,11 @@ copy-aar:
 build: build-aar copy-aar
 
 # Build SDK
-release: build sdk-debug copy-sdk
+release: build sdk-release copy-sdk
 	@echo "Building SDK.."
 	$(GRADLEW) assembleRelease
 
 copy-sdk:
-	ls build/sdk/outputs
-	ls build/sdk/outputs/aar
 	cp build/sdk/outputs/aar/$(SDK_OUTPUT) example/libs
 
 sdk-debug:
