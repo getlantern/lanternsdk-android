@@ -65,7 +65,7 @@ LanternManager.startLantern(context, proxyAddr, proxyAllTraffic)
 ```
 
 After starting Lantern, it will be set as the system proxy and all HTTP traffic will be proxied.
-This method blocks up til the given timeout and returns the address the proxy is listening. If the proxy doesn't start within the given timeout, it returns an error.
+This method returns the address the proxy is listening. If the proxy fails to start, it returns an error.
 
 4. Stop the Lantern Proxy
 
