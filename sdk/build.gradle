@@ -97,7 +97,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.11.0'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
 
-    embed(name:'lanternsdk-android', ext:'aar')
+    embed(name:'lantern-android', ext:'aar')
 
     implementation 'androidx.appcompat:appcompat:1.7.0'
 }
