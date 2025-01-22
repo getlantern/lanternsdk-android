@@ -26,7 +26,6 @@ object LanternManager {
      * @param configDir The directory where Lantern configuration files will be stored.
      */
     fun setup(
-        context: Context,
         appName: String,
         configDir: String,
     ) {
@@ -62,7 +61,6 @@ object LanternManager {
     @Synchronized
     @Throws(Exception::class)
     fun startLantern(
-        context: Context,
         addr: String,
         proxyAll: Boolean,
     ): InetSocketAddress {

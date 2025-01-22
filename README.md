@@ -46,7 +46,7 @@ Before starting the Lantern proxy, initialize the SDK with your app name and con
 ```kotlin
 import io.lantern.sdk.LanternManager
 
-LanternManager.setup(context, "HelloVPN", "HelloVPN/config")
+LanternManager.setup("HelloVPN", "HelloVPN/config")
 ```
 
 3. Start the Lantern Proxy
@@ -56,12 +56,10 @@ Start Lantern with the desired proxy configuration:
 ```kotlin
 import io.lantern.sdk.LanternManager
 
-
-val context: Context = // ...
 val proxyAddr = ":8080"  // Proxy address (port 8080 in this example
 val proxyAllTraffic = true // Set to true to proxy all traffic
 
-LanternManager.startLantern(context, proxyAddr, proxyAllTraffic)
+LanternManager.startLantern(proxyAddr, proxyAllTraffic)
 ```
 
 After starting Lantern, it will be set as the system proxy and all HTTP traffic will be proxied.
