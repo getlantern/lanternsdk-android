@@ -47,7 +47,7 @@ example-debug:
 	$(GRADLEW) $(EXAMPLE_PROJECT):assembleDebug
 
 example-release:
-	$(GRADLEW) $(EXAMPLE_PROJECT):assembleDebug
+	$(GRADLEW) $(EXAMPLE_PROJECT):assembleRelease
 
 clean:
 	rm -rf $(LIBS_DIR)/$(AAR_OUTPUT)
