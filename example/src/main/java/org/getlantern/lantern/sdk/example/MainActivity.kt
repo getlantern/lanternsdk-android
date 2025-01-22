@@ -25,7 +25,7 @@ import java.net.Proxy
 import java.net.ProxySelector
 import java.net.SocketAddress
 import java.net.URI
-import io.lantern.sdk.Lantern
+import io.lantern.sdk.LanternManager
 import io.lantern.sdk.ProxyHelper
 
 class MainActivity : AppCompatActivity() {
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Lantern.setup(this, "Example", "Example/Config")
+        LanternManager.setup(this, "Example", "Example/Config")
 
         setContentView(R.layout.activity_main)
 
@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
         // Start the HTTP proxy using the SDK
         val proxyAddr = ":8080"
         val proxyAllTraffic = true
-        val result = Lantern.start(this, proxyAddr, proxyAllTraffic)
+        val result = LanternManager.startLantern(this, proxyAddr, proxyAllTraffic)
         val proxyPort = result.port
         ProxyHelper.setProxy("127.0.0.1", proxyPort)
         appendLog("Proxy started on port $proxyPort\n")
@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
 
     // Stop the HTTP proxy
     private fun stopProxy() {
-        Lantern.stop()
+        LanternManager.stopLantern()
 
         appendLog("Proxy stopped\n")
         proxyRunning = false
@@ -125,7 +125,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setProxyForWebView() {
         val proxyHost = "127.0.0.1"
-        val proxyPort = Lantern.getProxyPort()
+        val proxyPort = LanternManager.getProxyPort()
 
         val proxySelector = object : ProxySelector() {
             override fun select(uri: URI?): List<Proxy> {
@@ -154,7 +154,7 @@ class MainActivity : AppCompatActivity() {
 
         // Configure OkHttp client to use the proxy
         val proxyHost = "127.0.0.1"
-        val proxyPort = Lantern.getProxyPort()
+        val proxyPort = LanternManager.getProxyPort()
         val proxy = Proxy(Proxy.Type.HTTP, InetSocketAddress(proxyHost, proxyPort))
 
         val client = OkHttpClient.Builder()

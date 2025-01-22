@@ -7,6 +7,12 @@ After running the build, you can find the library at `./build/lanternsdk-android
 library embeds the Go library, so consumers of the SDK just need lanternsdk-android.aar and nothing
 else.
 
+## Overview
+
+- [lantern](lantern): The core Go logic for configuring and launching Lantern (via Flashlight)
+- [sdk](sdk): The SDK module that wraps the Go functions in a Kotlin-friendly interface
+- [example](example): Demonstrates how to integrate the Lantern SDK in an actual Android application.
+
 ## Usage
 
 ### Build Lantern library
@@ -24,25 +30,25 @@ SDK to use, including the app name and configuration directory.
 
 ```kotlin
 import android.content.Context
-import io.lantern.sdk.Lantern
+import io.lantern.sdk.LanternManager
 
 val context: Context = // ...
 
-Lantern.setup(context, "HelloVPN", "HelloVPN/config")
+LanternManager.setup(context, "HelloVPN", "HelloVPN/config")
 ```
 
 ### Starting Lantern
 
 ```kotlin
 import android.content.Context
-import io.lantern.sdk.Lantern
+import io.lantern.sdk.LanternManager
 
 
 val context: Context = // ...
 val proxyAddr = ":8080"
 val proxyAllTraffic = true
 
-Lantern.start(context, proxyAddr, proxyAllTraffic)
+LanternManager.startLantern(context, proxyAddr, proxyAllTraffic)
 ```
 
 After starting Lantern, it will be set as the system proxy and all HTTP traffic will be proxied.
@@ -51,7 +57,7 @@ This method blocks up til the given timeout and returns the address the proxy is
 ### Stopping Lantern
 
 ```kotlin
-Lantern.stop()
+LanternManager.stopLantern()
 ```
 
 After stopping Lantern, Lantern will continue to run in the background to keep fetching updated
@@ -62,5 +68,5 @@ Lantern can be restarted after stopping it. This will be a fast start since Lant
 running
 
 ```kotlin
-Lantern.restart(context, startTimeoutMillis)
+LanternManager.restart(context, startTimeoutMillis)
 ```

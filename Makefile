@@ -19,8 +19,7 @@ build-aar:
 	gomobile init && \
 	gomobile bind -target=android -tags='headless lantern' -o=$(BUILD_DIR)/$(LIBLANTERN) \
 		-androidapi=23 \
-		-ldflags="-s -w $(EXTRA_LDFLAGS)" \
-		github.com/getlantern/lantern-client/sdk
+		-ldflags="-s -w $(EXTRA_LDFLAGS)" ./lantern
 
 copy-aar:
 	echo "Copying AAR to $(LIBS_DIR)..."
