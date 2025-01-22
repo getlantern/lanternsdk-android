@@ -50,5 +50,5 @@ example-release:
 	$(GRADLEW) $(EXAMPLE_PROJECT):assembleRelease
 
 clean:
-	rm -rf $(LIBS_DIR)/$(AAR_OUTPUT)
+	rm -rf $(LIBS_DIR)/$(LIBLANTERN)
 	rm -rf $(BUILD_DIR)
