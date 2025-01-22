@@ -56,7 +56,7 @@ Start Lantern with the desired proxy configuration:
 ```kotlin
 import io.lantern.sdk.LanternManager
 
-val proxyAddr = ":8080"  // Proxy address (port 8080 in this example
+val proxyAddr = ":8080"  // Proxy address
 val proxyAllTraffic = true // Set to true to proxy all traffic
 
 LanternManager.startLantern(proxyAddr, proxyAllTraffic)
