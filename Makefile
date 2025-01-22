@@ -1,6 +1,6 @@
 SDK_NAME := liblantern
 SDK_DIR := sdk
-AAR_OUTPUT := lantern-android.aar
+LIBLANTERN := lantern-android.aar
 SDK_OUTPUT := lanternsdk-android.aar
 LIBS_DIR := $(SDK_DIR)/libs
 BUILD_DIR := build
@@ -17,7 +17,7 @@ build-aar:
 	go install golang.org/x/mobile/cmd/gomobile@latest && \
 	go get golang.org/x/mobile/bind && \
 	gomobile init && \
-	gomobile bind -target=android -tags='headless lantern' -o=$(BUILD_DIR)/$(AAR_OUTPUT) \
+	gomobile bind -target=android -tags='headless lantern' -o=$(BUILD_DIR)/$(LIBLANTERN) \
 		-androidapi=23 \
 		-ldflags="-s -w $(EXTRA_LDFLAGS)" \
 		github.com/getlantern/lantern-client/sdk
@@ -25,9 +25,9 @@ build-aar:
 copy-aar:
 	echo "Copying AAR to $(LIBS_DIR)..."
 	mkdir -p $(LIBS_DIR)
-	cp $(BUILD_DIR)/$(AAR_OUTPUT) $(LIBS_DIR)/$(AAR_OUTPUT)
+	cp $(BUILD_DIR)/$(LIBLANTERN) $(LIBS_DIR)/$(LIBLANTERN)
 
-build: build-aar copy-aar sdk-release
+build: build-aar copy-aar
 	echo "Lantern SDK: build/$(SDK_OUTPUT)"
 
 # Build SDK
