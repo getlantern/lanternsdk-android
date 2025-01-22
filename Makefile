@@ -34,7 +34,7 @@ build: build-aar copy-aar sdk-release
 release: build sdk-release copy-sdk example-release
 
 copy-sdk:
-	cp build/sdk/outputs/aar/$(SDK_OUTPUT) example/libs
+	cp build/$(SDK_OUTPUT) example/libs
 
 sdk-debug:
 	$(GRADLEW) clean :$(SDK_DIR):assembleDebug
