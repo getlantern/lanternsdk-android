@@ -62,11 +62,3 @@ LanternManager.stopLantern()
 
 After stopping Lantern, Lantern will continue to run in the background to keep fetching updated
 configuration maintain its state, but no traffic will be proxied.
-
-### Restart Lantern
-Lantern can be restarted after stopping it. This will be a fast start since Lantern is already
-running
-
-```kotlin
-LanternManager.restart(context, startTimeoutMillis)
-```
