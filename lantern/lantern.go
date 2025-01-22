@@ -1,8 +1,7 @@
-// package lantern provides an API for interacting with flashlight
+// package lantern provides an API for interacting with the flashlight library.
+// It is designed to act as a mobile SDK for integrating Lantern's proxying
+// and censorship circumvention capabilities.
 package lantern
-
-// #cgo LDFLAGS: -static-libstdc++
-import "C"
 
 import (
 	"errors"
@@ -22,11 +21,11 @@ import (
 const defaultStartTimeout = 5 * time.Second
 
 var (
-	log           = golog.LoggerFor("lantern")
-	lanternClient *LanternClient
+	log = golog.LoggerFor("lantern")
 )
 
-// LanternClient is the exported type used by gomobile for Lantern operations.
+// LanternClient provides an interface for configuring and running Lantern's
+// HTTP proxy. Each instance manages its own configuration and state
 type LanternClient struct {
 	client    *client.Client
 	configDir string
@@ -42,23 +41,24 @@ func NewLanternClient() *LanternClient {
 	return &LanternClient{}
 }
 
-// StartResult provides information about the started Lantern
+// StartResult provides information about the started Lantern instance,
+// including the address where the HTTP proxy is listening.
 type StartResult struct {
 	Addr string
 }
 
-// Setup is used to initially configure the Lantern SDK and specifies the config directory and app name to use
-// - appName: unique identifier for the current application (used for assigning proxies and tracking usage)
-// - configDir: application directory to place Lantern configure files
+// Setup configures the Lantern SDK by setting the application name and configuration directory.
+// This method must be called before starting Lantern.
 func (lc *LanternClient) Setup(appName, configDir string) {
-	fmt.Printf("Lantern setup with appName=%s, configDir=%s\n", appName, configDir)
+	log.Debugf("Lantern setup with appName=%s, configDir=%s", appName, configDir)
 	lc.mu.Lock()
+	defer lc.mu.Unlock()
 	lc.configDir = configDir
 	lc.appName = appName
-	lc.mu.Unlock()
 }
 
-// Start blocks up to the given timeout while launching Lantern.
+// Start initializes and starts the Lantern HTTP proxy. If Lantern is already running,
+// this method returns an error. It blocks until the proxy is ready
 func (lc *LanternClient) Start(httpProxyAddr string, proxyAll bool) (*StartResult, error) {
 	if lc.started {
 		return nil, errors.New("Lantern is already running")
@@ -77,9 +77,9 @@ func (lc *LanternClient) Start(httpProxyAddr string, proxyAll bool) (*StartResul
 	return &StartResult{addr.(string)}, nil
 }
 
-// Stops circumventing with Lantern. Lantern will actually continue running in the background
-// in order to keep its configuration up-to-date. Subsequent calls to start() will reuse the
-// running Lantern and complete quickly.
+// Stop disables Lantern's proxy functionality but allows it to continue running
+// in the background for configuration updates. Subsequent calls to Start() will
+// reuse the existing Lantern instance.
 func (lc *LanternClient) Stop() error {
 	if !lc.started {
 		return errors.New("Lantern is not running")
@@ -102,6 +102,7 @@ func (lc *LanternClient) HTTPProxyPort() (int, error) {
 	return port, nil
 }
 
+// runLantern launches the Lantern engine and sets up its HTTP proxy.
 func (lc *LanternClient) runLantern(httpProxyAddr string, proxyAll bool) *flashlight.Flashlight {
 	appName, configDir := lc.appName, lc.configDir
 	log.Debugf("Starting lantern: configDir %s", configDir)
@@ -129,11 +130,14 @@ func (lc *LanternClient) runLantern(httpProxyAddr string, proxyAll bool) *flashl
 	if err != nil {
 		log.Fatalf("failed to start flashlight: %v", err)
 	}
+	// Start Lantern in a separate goroutine
 	go func() {
 		runner.Run(
 			httpProxyAddr, // listen for HTTP on provided address
 			"127.0.0.1:0", // listen for SOCKS on random address
 			func(c *client.Client) {
+				lc.mu.Lock()
+				defer lc.mu.Unlock()
 				lc.client = c
 			},
 			nil, // onError
