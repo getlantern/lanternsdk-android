@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun openWebView() {
         if (!LanternManager.isRunning()) {
-            appendLog("Proxy is not running. Start the proxy first.\n")
+            appendLog("Proxy is not running. Start the proxy first.")
             return
         }
 
@@ -94,18 +94,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun testHttpRequest() {
         if (!LanternManager.isRunning()) {
-            appendLog("Lantern is not running. Start the proxy first.\n")
+            appendLog("Lantern is not running. Start the proxy first.")
             return
         }
         val url = "https://jsonplaceholder.typicode.com/posts/1" // Test API
         ProxyHelper.testHttpRequest(
             url = url,
             onSuccess = { response ->
-                appendLog("Request sent to $url\n")
-                appendLog("Response: $response\n\n")
+                appendLog("Request sent to $url")
+                appendLog("Response: $response")
             },
             onError = { error ->
-                appendLog("Error: $error\n\n")
+                appendLog("Error: $error")
             },
         )
     }
