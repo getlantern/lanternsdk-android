@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        LanternManager.setup("Example", "Example/Config")
+        LanternManager.setup(this, "Example")
 
         setContentView(R.layout.activity_main)
 
