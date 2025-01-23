@@ -56,6 +56,7 @@ func (lc *LanternClient) Setup(appName, configDir string) {
 	log.Debugf("Lantern setup with appName=%s, configDir=%s", appName, configDir)
 	lc.mu.Lock()
 	defer lc.mu.Unlock()
+
 	lc.configDir = configDir
 	lc.appName = appName
 }

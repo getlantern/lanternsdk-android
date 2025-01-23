@@ -23,13 +23,24 @@ object LanternManager {
      *
      * @param context The application context (used to resolve file paths if necessary).
      * @param appName A unique identifier for the application (used for assigning proxies and tracking usage).
-     * @param configDir The directory where Lantern configuration files will be stored.
+     * @param customConfigDir The directory where Lantern configuration files will be stored.
      */
     fun setup(
+        context: Context,
         appName: String,
-        configDir: String,
+        customConfigDir: String? = null,
     ) {
-        lanternClient.setup(appName, configDir)
+        val configDir = if (customConfigDir.isNullOrBlank()) {
+            // Default to the app's internal files directory
+            File(context.filesDir, "lantern_config")
+        } else {
+            File(customConfigDir)
+        }
+
+        if (!configDir.exists()) {
+            configDir.mkdirs()
+        }
+        lanternClient.setup(appName, configDir.absolutePath)
     }
 
     fun _setProxy(

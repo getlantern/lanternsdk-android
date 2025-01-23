@@ -46,8 +46,12 @@ Before starting the Lantern proxy, initialize the SDK with your app name and con
 ```kotlin
 import io.lantern.sdk.LanternManager
 
-LanternManager.setup("HelloVPN", "HelloVPN/config")
+
+val context: Context = // ...
+LanternManager.setup(context, "HelloVPN", "HelloVPN/config")
 ```
+
+If no configuration directory is provided, the configuration files will be stored securely in the app’s internal storage.
 
 3. Start the Lantern Proxy
 
