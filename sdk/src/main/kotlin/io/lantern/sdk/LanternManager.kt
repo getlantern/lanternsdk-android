@@ -111,14 +111,4 @@ object LanternManager {
     private fun deviceId(context: Context): String {
         return Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
     }
-
-    private fun configDir(context: Context): String {
-        return File(context.filesDir, ".Lantern").absolutePath
-    }
-
-    data class ProxyResponse(
-        val mimeType: String,
-        val encoding: String,
-        val inputStream: InputStream
-    )
 }
