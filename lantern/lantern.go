@@ -87,8 +87,7 @@ func (lc *LanternClient) Start(httpProxyAddr string, proxyAll bool) (*StartResul
 }
 
 // Stop disables Lantern's proxy functionality but allows it to continue running
-// in the background for configuration updates. Subsequent calls to Start() will
-// reuse the existing Lantern instance.
+// in the background for configuration updates.
 func (lc *LanternClient) Stop() error {
 	lc.mu.Lock()
 	defer lc.mu.Unlock()
@@ -105,20 +104,35 @@ func (lc *LanternClient) Stop() error {
 	if err := lc.client.Stop(); err != nil {
 		return err
 	}
-
+	lc.client = nil
 	lc.started = false
 	return nil
 }
 
 // HTTPProxyPort returns the port the HTTP proxy is listening on
 func (lc *LanternClient) HTTPProxyPort() (int, error) {
-	result, isValid := client.Addr(5 * time.Second)
+	lc.mu.Lock()
+	defer lc.mu.Unlock()
+
+	if lc.client == nil {
+		// Lantern hasn't fully initialized the client yet
+		return 0, errors.New("client is not fully initialized")
+	}
+
+	result, isValid := lc.client.Addr(5 * time.Second)
 	if !isValid {
 		return 0, errLanternNotRunning
 	}
 	_, portStr, _ := net.SplitHostPort(result.(string))
 	port, _ := strconv.Atoi(portStr)
 	return port, nil
+}
+
+// IsRunning returns whether or not Lantern is currently running
+func (lc *LanternClient) IsRunning() bool {
+	lc.mu.Lock()
+	defer lc.mu.Unlock()
+	return lc.started
 }
 
 // runLantern launches the Lantern engine and sets up its HTTP proxy.
@@ -130,7 +144,7 @@ func (lc *LanternClient) runLantern(httpProxyAddr string, proxyAll bool) *flashl
 
 	log.Debugf("Starting Lantern with configDir=%s, proxyAll=%v", configDir, proxyAll)
 
-	userConfig := common.NewUserConfig("", "a34113", 3456344, "tok123", map[string]string{}, "")
+	userConfig := common.NewUserConfig("", "a34113", 381696446, "K1qttSsZruN", map[string]string{}, "")
 
 	runner, err := flashlight.New(
 		appName,
