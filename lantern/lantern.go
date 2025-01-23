@@ -87,8 +87,7 @@ func (lc *LanternClient) Start(httpProxyAddr string, proxyAll bool) (*StartResul
 }
 
 // Stop disables Lantern's proxy functionality but allows it to continue running
-// in the background for configuration updates. Subsequent calls to Start() will
-// reuse the existing Lantern instance.
+// in the background for configuration updates.
 func (lc *LanternClient) Stop() error {
 	lc.mu.Lock()
 	defer lc.mu.Unlock()
@@ -145,7 +144,7 @@ func (lc *LanternClient) runLantern(httpProxyAddr string, proxyAll bool) *flashl
 
 	log.Debugf("Starting Lantern with configDir=%s, proxyAll=%v", configDir, proxyAll)
 
-	userConfig := common.NewUserConfig("", "a34113", 381696446, "K1qttSsZruN-RNCm_Ht1mOywwILZ7xTlj5LSEz4Wv-_PktvyqvKMQQ", map[string]string{}, "")
+	userConfig := common.NewUserConfig("", "a34113", 381696446, "K1qttSsZruN", map[string]string{}, "")
 
 	runner, err := flashlight.New(
 		appName,
