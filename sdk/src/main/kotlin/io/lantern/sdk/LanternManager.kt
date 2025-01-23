@@ -1,15 +1,10 @@
 package io.lantern.sdk
 
 import android.content.Context
-import android.os.Build
 import android.provider.Settings
-import android.util.Log
-import java.io.File
-import java.io.IOException
-import java.io.InputStream
-import java.net.*
-import java.util.concurrent.atomic.AtomicReference
 import lantern.LanternClient
+import java.io.File
+import java.net.*
 
 /**
  * LanternManager provides an API to use an embedded Lantern. It wraps the LanternClient and
@@ -21,32 +16,17 @@ object LanternManager {
 
     /**
      * Configures Lantern with the specified application name and configuration directory.
+     * Defaults to an internal app directory if `customConfigDir` is not provided.
      * This must be called before starting Lantern.
-     *
-     * @param context The application context (used to resolve file paths if necessary).
-     * @param appName A unique identifier for the application (used for assigning proxies and tracking usage).
-     * @param customConfigDir The directory where Lantern configuration files will be stored.
      */
     fun setup(
         context: Context,
         appName: String,
         customConfigDir: String? = null,
     ) {
-        val configDir = if (customConfigDir.isNullOrBlank()) {
-            // Default to the app's internal files directory
-            File(context.filesDir, "lantern_config")
-        } else {
-            File(customConfigDir)
-        }
-
-        if (!configDir.exists()) {
-            configDir.mkdirs()
-        }
+        val configDir = customConfigDir?.let { File(it) } ?: File(context.filesDir, "lantern_config")
+        if (!configDir.exists()) configDir.mkdirs()
         lanternClient.setup(appName, configDir.absolutePath)
-    }
-
-    fun isRunning(): Boolean {
-        return lanternClient.isRunning()
     }
 
     /**
@@ -59,19 +39,24 @@ object LanternManager {
      * @return the InetSocketAddress at which the Lantern HTTP proxy is listening for connections
      */
     @Synchronized
-    @Throws(Exception::class)
     fun startLantern(
         addr: String,
         proxyAll: Boolean,
-    ): InetSocketAddress {
-        val result = lanternClient.start(addr, proxyAll)
-        ProxyHelper.setProxy(result.addr)
-        return addrFromString(result.addr)
+    ): InetSocketAddress? {
+        return try {
+            val result = lanternClient.start(addr, proxyAll)
+            ProxyHelper.setProxy(result.addr)
+            return ProxyHelper.addrFromString(result.addr)
+        } catch (e: Exception) {
+            println("Failed to stop Lantern: ${e.message}")
+            null
+        }
     }
 
     /**
-     * Stops Lantern's active proxying but keeps it running in the background for configuration updates.
-     * Future calls to startLantern() will reuse the running instance.
+     * Stops Lantern's active proxying and clears the system proxy. It keeps running in the
+     * background for configuration updates. Future calls to startLantern() will reuse the
+     * running instance.
      */
     @Synchronized
     fun stopLantern() {
@@ -84,31 +69,15 @@ object LanternManager {
         }
     }
 
+    /**
+     * Checks if Lantern is running.
+     */
+    fun isRunning(): Boolean = lanternClient.isRunning()
 
     /**
-     * Returns the port where Lantern's HTTP proxy is listening.
-     *
-     * @return The proxy port number.
+     * Returns the Lantern HTTP proxy port.
      */
-    fun getProxyPort(): Int {
-        val result = lanternClient.httpProxyPort()
-        return result.toInt()
-    }
+    fun getProxyPort(): Int = lanternClient.httpProxyPort().toInt()
 
-    /**
-     * Converts a host:port string into an InetSocketAddress by first making a fake URL using that
-     * address.
-     *
-     * @param addr
-     * @return
-     */
-    @Throws(Exception::class)
-    private fun addrFromString(addr: String): InetSocketAddress {
-        val uri = URI("my://$addr")
-        return InetSocketAddress("127.0.0.1", uri.port)
-    }
-
-    private fun deviceId(context: Context): String {
-        return Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-    }
+    private fun deviceId(context: Context): String = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
 }
