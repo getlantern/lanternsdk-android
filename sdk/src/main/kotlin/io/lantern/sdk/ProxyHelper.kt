@@ -1,41 +1,64 @@
 package io.lantern.sdk
 
+import android.util.Log
+import java.io.IOException
 import java.io.InputStream
 import java.net.InetSocketAddress
 import java.net.Proxy
+import java.net.*
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
 object ProxyHelper {
     // Default proxy configuration
-    private var proxyHost: String = "127.0.0.1"
-    private var proxyPort: Int = 8080
-    private var httpClient: OkHttpClient = createHttpClient()
+    private const val TAG = "ProxyHelper"
+    private var httpClient = OkHttpClient.Builder().build()
 
-    // Update the proxy settings
-    fun setProxy(host: String, port: Int) {
-        proxyHost = host
-        proxyPort = port
-        httpClient = createHttpClient() // Recreate the client with the new proxy
+    private fun clearProxy() {
+        try {
+            // Reset to the default ProxySelector (clears custom proxy settings)
+            ProxySelector.setDefault(ProxySelector.getDefault())
+            httpClient = OkHttpClient.Builder().build()
+            Log.d(TAG, "Proxy settings cleared")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
-    private fun createHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
-            .proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress(proxyHost, proxyPort)))
-            .build()
+    fun setProxy(proxyAddr:String) {
+        if (proxyAddr == "") {
+            clearProxy()
+            return
+        }
+        val uri = URI("my://$proxyAddr")
+        val proxy = Proxy(Proxy.Type.HTTP, InetSocketAddress("127.0.0.1", uri.port))
+        createHTTPClient("127.0.0.1", uri.port)
+        ProxySelector.setDefault(object : ProxySelector() {
+            override fun select(uri: URI?): List<Proxy> = listOf(proxy)
+            override fun connectFailed(uri: URI?, sa: SocketAddress?, ioe: IOException?) {}
+        })
+        Log.d(TAG, "Proxy set to: $proxy")
+    }
+
+    // Update the proxy settings
+    private fun createHTTPClient(proxyHost: String, proxyPort: Int) {
+        httpClient = OkHttpClient.Builder()
+        .proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress(proxyHost, proxyPort)))
+        .build()
     }
 
     // Forward request through proxy
-    fun proxyRequest(url: String): ProxyResponse? {
+    fun proxyRequest(
+        url: String,
+    ): ProxyResponse? {
         return try {
             val request = Request.Builder()
-                .url(url)
-                .build()
+                .url(url).build()
 
             val response = httpClient.newCall(request).execute()
             ProxyResponse(
-                mimeType = response.header("Content-Type", "text/plain") ?: "text/plain",
-                encoding = response.header("Content-Encoding", "UTF-8") ?: "UTF-8",
+                mimeType = "text/html",
+                encoding = "UTF-8",
                 inputStream = response.body?.byteStream() ?: InputStream.nullInputStream()
             )
         } catch (e: Exception) {
@@ -43,6 +66,7 @@ object ProxyHelper {
             null
         }
     }
+
 
     data class ProxyResponse(
         val mimeType: String,

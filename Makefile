@@ -45,7 +45,7 @@ sdk-release:
 	cp build/sdk/outputs/aar/sdk-release.aar ./build/$(SDK_OUTPUT)
 
 example-debug:
-	$(GRADLEW) $(EXAMPLE_PROJECT):assembleDebug
+	$(GRADLEW) clean $(EXAMPLE_PROJECT):assembleDebug
 
 example-release:
 	$(GRADLEW) $(EXAMPLE_PROJECT):assembleRelease

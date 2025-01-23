@@ -3,8 +3,10 @@ package io.lantern.sdk
 import android.content.Context
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import java.io.File
 import java.io.IOException
+import java.io.InputStream
 import java.net.*
 import java.util.concurrent.atomic.AtomicReference
 import lantern.LanternClient
@@ -14,8 +16,8 @@ import lantern.LanternClient
  * configures Lantern as a system proxy for HTTP traffic.
  */
 object LanternManager {
+    private const val TAG = "LanternManager"
     private val lanternClient = LanternClient()
-    private var lanternAddr: InetSocketAddress? = null
 
     /**
      * Configures Lantern with the specified application name and configuration directory.
@@ -43,21 +45,8 @@ object LanternManager {
         lanternClient.setup(appName, configDir.absolutePath)
     }
 
-    fun _setProxy(
-        proxyAddr: String,
-    ) {
-        ProxySelector.setDefault(object : ProxySelector() {
-            override fun select(uri: URI?): List<Proxy> {
-                val result = mutableListOf<Proxy>()
-                val addr = addrFromString(proxyAddr)
-                result.add(Proxy(Proxy.Type.HTTP, addr))
-                return result
-            }
-
-            override fun connectFailed(uri: URI?, sa: SocketAddress?, ioe: IOException?) {
-                // Do nothing
-            }
-        })
+    fun isRunning(): Boolean {
+        return lanternClient.isRunning()
     }
 
     /**
@@ -76,9 +65,8 @@ object LanternManager {
         proxyAll: Boolean,
     ): InetSocketAddress {
         val result = lanternClient.start(addr, proxyAll)
-        lanternAddr = addrFromString(result.addr)
-        _setProxy(result.addr)
-        return lanternAddr!!
+        ProxyHelper.setProxy(result.addr)
+        return addrFromString(result.addr)
     }
 
     /**
@@ -89,7 +77,7 @@ object LanternManager {
     fun stopLantern() {
         try {
             lanternClient.stop()
-            _setProxy("")
+            ProxyHelper.setProxy("")
             println("Lantern stopped")
         } catch (e: Exception) {
             println("Failed to stop Lantern: ${e.message}")
@@ -117,7 +105,7 @@ object LanternManager {
     @Throws(Exception::class)
     private fun addrFromString(addr: String): InetSocketAddress {
         val uri = URI("my://$addr")
-        return InetSocketAddress(uri.host, uri.port)
+        return InetSocketAddress("127.0.0.1", uri.port)
     }
 
     private fun deviceId(context: Context): String {
@@ -127,4 +115,10 @@ object LanternManager {
     private fun configDir(context: Context): String {
         return File(context.filesDir, ".Lantern").absolutePath
     }
+
+    data class ProxyResponse(
+        val mimeType: String,
+        val encoding: String,
+        val inputStream: InputStream
+    )
 }
