@@ -18,6 +18,7 @@ VERSION ?= dev
 build-aar: export EXTRA_LDFLAGS += -checklinkname=0
 build-aar:
 	@echo "Building Lantern library..."
+	mkdir -p $(BUILD_DIR)
 	go env -w 'GOPRIVATE=github.com/getlantern/*'
 	go install golang.org/x/mobile/cmd/gomobile@latest
 	go get golang.org/x/mobile/bind
