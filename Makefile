@@ -55,7 +55,6 @@ merge-libs: extract
 # Build SDK
 build-sdk: merge-libs sdk-release
 	@echo "Copying final SDK AAR..."
-	mkdir -p $(BUILD_DIR)
 	cp build/$(SDK_DIR)/outputs/aar/sdk-release.aar \
 	   $(BUILD_DIR)/lanternsdk-android-$(VERSION).aar
 	@echo "SDK built -> $(BUILD_DIR)/lanternsdk-android-$(VERSION).aar"
