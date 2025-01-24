@@ -30,9 +30,15 @@ jobs:
           java-version: 17
           cache: 'gradle'
 
+      - name: Derive version from tag
+        id: set-version
+        run: |
+          # github.ref_name might be "v1.0.0"
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
       - name: Build SDK
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
           echo "Building Lantern SDK version $VERSION"
           make build-sdk VERSION=$VERSION
 
@@ -43,6 +49,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}
           name: "Release ${{ github.ref_name }}"
-          body: "Automated release for version ${{ github.ref_name }}"
-          artifacts: "build/lanternsdk-android-${{ github.ref_name#v }}.aar"
+          body: "Automated release for version ${{ env.VERSION }}"
+          artifacts: "build/lanternsdk-android-${{ env.VERSION }}.aar"
           artifact_content_type: "application/zip"
