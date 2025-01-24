@@ -1,0 +1,12 @@
+# .jitpack.yml
+jdk:
+  - openjdk17
+
+before_build:
+  - go version || true
+  - go install golang.org/x/mobile/cmd/gomobile@latest
+  - go install golang.org/x/mobile/cmd/gobind@latest
+
+build:
+  - echo "Running 'make build-sdk'..."
+  - make build-sdk
