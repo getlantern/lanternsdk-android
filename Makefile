@@ -1,7 +1,8 @@
-SDK_NAME := liblantern
+
+LIBLANTERN := liblantern
+SDK_NAME := lanternsdk-android
 SDK_DIR := sdk
-LIBLANTERN := liblantern.aar
-SDK_OUTPUT := lanternsdk-android.aar
+SDK_OUTPUT := $(SDK_NAME).aar
 BUILD_DIR := build
 PROD_FLAG := -ldflags "-s -w"
 GRADLEW := ./gradlew
@@ -22,7 +23,7 @@ build-aar:
 	go get golang.org/x/mobile/bind
 	gomobile init
 	gomobile bind -target=android -tags='headless lantern' \
-		-o=$(BUILD_DIR)/$(LIBLANTERN) \
+		-o=$(BUILD_DIR)/$(LIBLANTERN).aar \
 		-androidapi=23 \
 		-ldflags="-s -w -checklinkname=0" \
 		./lantern
@@ -35,13 +36,13 @@ install-aar:
 
 sdk-release:
 	@echo "Building SDK module..."
-	@$(GRADLEW) clean :$(SDK_DIR):assembleRelease
+	@$(GRADLEW) :$(SDK_DIR):assembleRelease
 	@echo "SDK release built."
 
 extract: build-aar
 	rm -rf $(AAR_EXPLODED)
 	mkdir -p $(AAR_EXPLODED)
-	unzip -o $(BUILD_DIR)/$(LIBLANTERN) -d $(AAR_EXPLODED)
+	unzip -o $(BUILD_DIR)/$(LIBLANTERN).aar -d $(AAR_EXPLODED)
 
 merge-libs: extract
 	mkdir -p $(SDK_JNI_LIBS)
@@ -59,7 +60,9 @@ build-sdk: merge-libs sdk-release
 	@echo "SDK built -> $(BUILD_DIR)/lanternsdk-android-$(VERSION).aar"
 
 example-debug:
-	$(GRADLEW) clean $(EXAMPLE_PROJECT):assembleDebug
+	mkdir -p example/libs
+	cp $(BUILD_DIR)/lanternsdk-android-$(VERSION).aar example/libs/lanternsdk-android.aar
+	$(GRADLEW) $(EXAMPLE_PROJECT):assembleDebug
 
 example-release:
 	$(GRADLEW) $(EXAMPLE_PROJECT):assembleRelease

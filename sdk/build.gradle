@@ -1,11 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
-    id 'maven-publish'
-    id 'signing'
 }
-
-apply plugin: 'com.kezong.fat-aar'
 
 android {
     namespace 'io.lantern.sdk'
@@ -46,7 +42,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
@@ -70,6 +66,7 @@ android {
 
 dependencies {
     implementation files("libs/liblantern.jar")
+
     implementation 'androidx.core:core-ktx:1.15.0'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.squareup.okhttp3:okhttp:4.11.0'
@@ -78,13 +75,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.7.0'
 }
 
- afterEvaluate {
-     tasks.named('extractDeepLinksDebug') {
-         enabled = false
-     }
- }
-
-fataar {
-    transitive = true
+afterEvaluate {
+    tasks.named('extractDeepLinksDebug') {
+        enabled = false
+    }
 }
-

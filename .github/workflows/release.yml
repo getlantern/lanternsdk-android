@@ -33,7 +33,7 @@ jobs:
       - name: Build SDK
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
-          echo "Building Lantern SDK for version $VERSION"
+          echo "Building Lantern SDK version $VERSION"
           make build-sdk VERSION=$VERSION
 
       - name: Create GitHub Release
