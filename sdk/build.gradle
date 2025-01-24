@@ -10,17 +10,15 @@ apply plugin: 'com.kezong.fat-aar'
 android {
     namespace 'io.lantern.sdk'
     ndkVersion "27.0.12077973"
-    compileSdk 35
+    compileSdkVersion 33
     buildToolsVersion "34.0.0"
 
     defaultConfig {
         minSdkVersion 23
-        targetSdkVersion 34
-        versionCode 1
-        versionName "1.0"
+        targetSdkVersion 33
         multiDexEnabled true
         consumerProguardFiles 'proguard-rules.pro'
-
+        versionName project.findProperty("versionName") ?: "dev"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         externalNativeBuild {
@@ -48,8 +46,11 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+
         }
     }
 
@@ -67,46 +68,15 @@ android {
     }
 }
 
-publishing {
-    publications {
-        release(MavenPublication) {
-            groupId = 'org.getlantern.lantern'
-            artifactId = 'sdk'
-            version = '1.0.0'
-
-        }
-    }
-
-    repositories {
-        maven {
-            name = "ossrh"
-            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-
-            credentials {
-                username = project.findProperty("mavenCentralUsername") ?: System.getenv("MAVEN_USERNAME")
-                password = project.findProperty("mavenCentralPassword") ?: System.getenv("MAVEN_PASSWORD")
-            }
-        }
-    }
-}
-
 dependencies {
-    implementation fileTree(dir: 'libs', include: '*.jar')
+    implementation files("libs/liblantern.jar")
     implementation 'androidx.core:core-ktx:1.15.0'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.squareup.okhttp3:okhttp:4.11.0'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
 
-    embed(name:'liblantern', ext:'aar')
-
     implementation 'androidx.appcompat:appcompat:1.7.0'
 }
-
-// afterEvaluate {
-//     tasks.named('extractDeepLinksDebug') {
-//         dependsOn 'explodeLanternsdk-androidDebug'
-//     }
-// }
 
  afterEvaluate {
      tasks.named('extractDeepLinksDebug') {

@@ -25,17 +25,21 @@ The .aar file contains the compiled Go library and Kotlin bindings, ready for in
 
 1. Add the SDK to Your Project
 
-Copy the lanternsdk-android.aar file to your app’s libs/ directory and update your app’s build.gradle:
+You can easily add the Lantern SDK to your Android project by including it as a dependency in your build configuration.
+
+In your project-level build.gradle or settings.gradle file, add the JitPack repository:
 
 ```groovy
 repositories {
-    flatDir {
-        dirs 'libs'
-    }
+    maven { url 'https://jitpack.io' }
 }
+```
 
+In your app-level build.gradle file, include the dependency:
+
+```groovy
 dependencies {
-    implementation(name: 'lanternsdk-android', ext: 'aar')
+    implementation 'com.github.getlantern:lanternsdk-android:1.0.1'
 }
 ```
 
