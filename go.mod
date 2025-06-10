@@ -54,7 +54,7 @@ require (
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cespare/xxhash v1.1.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
-	github.com/cloudflare/circl v1.5.0 // indirect
+	github.com/cloudflare/circl v1.6.1 // indirect
 	github.com/coder/websocket v1.8.12 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dsoprea/go-exif/v2 v2.0.0-20230826092837-6579e82b732d // indirect
